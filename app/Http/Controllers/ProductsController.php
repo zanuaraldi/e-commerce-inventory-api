@@ -64,4 +64,17 @@ class ProductsController extends Controller
             ], 500);
         }
     }
+
+    public function destroy($id)
+    {
+        try {
+            $product = ProductsModel::findOrFail($id);
+            $product->delete();
+            return response()->json(['message' => 'Hapus produk berhasil dilakukan'], 200);
+        } catch (\Throwable $th) {
+            return response()->json([
+                'message' => 'Terjadi kesalahan ketika menghapus data'
+            ], 500);
+        }
+    }
 }
