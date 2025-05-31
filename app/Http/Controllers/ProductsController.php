@@ -100,4 +100,26 @@ class ProductsController extends Controller
             ], 500);
         }
     }
+
+    public function search(Request $request)
+    {
+        try {
+            $query = ProductsModel::query();
+
+            if ($request->has('name')) {
+                $query->where('name', 'like', '%' . $request->name . '%');
+            }
+
+            if ($request->has('category_id')) {
+                $query->where('category_id', $request->category_id);
+            }
+
+            $product = $query->with('categories')->get();
+            return response()->json($product, 200);
+        } catch (\Throwable $th) {
+            return response()->json([
+                'message' => 'Terjadi kesalahan ketika pencarian data'
+            ], 500);
+        }
+    }
 }
