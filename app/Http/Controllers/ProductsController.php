@@ -122,4 +122,18 @@ class ProductsController extends Controller
             ], 500);
         }
     }
+
+    public function inventoryValue()
+    {
+        try {
+            $total = ProductsModel::selectRaw('SUM(price * stock_quantity) as total')->value('total');
+            return response()->json([
+                'total_inventory_value' => $total
+            ], 200);
+        } catch (\Throwable $th) {
+            return response()->json([
+                'message' => 'Terjadi kesalahan ketika menghitung total inventaris'
+            ], 500);
+        }
+    }
 }
