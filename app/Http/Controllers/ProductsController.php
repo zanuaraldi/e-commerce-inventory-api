@@ -84,7 +84,7 @@ class ProductsController extends Controller
             $product = ProductsModel::findOrFail($request->product_id);
             $product->stock_quantity -= $request->quantity_sold;
 
-            if($product->stock_quantity < 0){
+            if ($product->stock_quantity < 0) {
                 return response()->json(['message' => 'Jumlah stok barang tidak bisa kurang dari 0']);
             }
 
@@ -94,11 +94,9 @@ class ProductsController extends Controller
                 'name' => $product->name,
                 'stock_quantity' => $product->stock_quantity
             ], 200);
-
         } catch (\Throwable $th) {
             return response()->json([
-                'message' => 'Terjadi kesalahan ketika memperbarui data',
-                'error' => $th->getMessage()
+                'message' => 'Terjadi kesalahan ketika memperbarui data'
             ], 500);
         }
     }
