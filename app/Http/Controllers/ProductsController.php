@@ -77,4 +77,29 @@ class ProductsController extends Controller
             ], 500);
         }
     }
+
+    public function updateStock(Request $request)
+    {
+        try {
+            $product = ProductsModel::findOrFail($request->product_id);
+            $product->stock_quantity -= $request->quantity_sold;
+
+            if($product->stock_quantity < 0){
+                return response()->json(['message' => 'Jumlah stok barang tidak bisa kurang dari 0']);
+            }
+
+            $product->save();
+            return response()->json([
+                'message' => 'Jumlah stok telah diperbarui',
+                'name' => $product->name,
+                'stock_quantity' => $product->stock_quantity
+            ], 200);
+
+        } catch (\Throwable $th) {
+            return response()->json([
+                'message' => 'Terjadi kesalahan ketika memperbarui data',
+                'error' => $th->getMessage()
+            ], 500);
+        }
+    }
 }
