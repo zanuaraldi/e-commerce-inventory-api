@@ -33,4 +33,15 @@ class ProductsController extends Controller
             ], 500);
         }
     }
+
+    public function show($id) {
+        try {
+            $product = ProductsModel::with('categories')->findOrFail($id);
+            return response()->json($product);
+        } catch (\Throwable $th) {
+            return response()->json([
+                'message' => 'Terjadi kesalahan ketika mencari data'
+            ], 500);
+        }
+    }
 }
