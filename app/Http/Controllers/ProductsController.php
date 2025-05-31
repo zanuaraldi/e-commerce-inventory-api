@@ -45,4 +45,23 @@ class ProductsController extends Controller
             ], 500);
         }
     }
+
+    public function update(Request $request, $id)
+    {
+        $validated = $request->validate([
+            'name' => 'sometimes|required|string|max:150',
+            'price' => 'sometimes|required|numeric|min:0',
+            'stock_quantity' => 'sometimes|required|integer|min:0'
+        ]);
+
+        try {
+            $product = ProductsModel::findOrFail($id);
+            $product->update($validated);
+            return response()->json($product);
+        } catch (\Throwable $th) {
+            return response()->json([
+                'message' => 'Terjadi kesalahan ketika memperbarui data'
+            ], 500);
+        }
+    }
 }
