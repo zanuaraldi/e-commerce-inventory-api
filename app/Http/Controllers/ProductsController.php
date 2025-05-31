@@ -38,7 +38,7 @@ class ProductsController extends Controller
     {
         try {
             $product = ProductsModel::with('categories')->findOrFail($id);
-            return response()->json($product);
+            return response()->json($product, 200);
         } catch (\Throwable $th) {
             return response()->json([
                 'message' => 'Terjadi kesalahan ketika mencari data'
