@@ -34,7 +34,8 @@ class ProductsController extends Controller
         }
     }
 
-    public function show($id) {
+    public function show($id)
+    {
         try {
             $product = ProductsModel::with('categories')->findOrFail($id);
             return response()->json($product);
