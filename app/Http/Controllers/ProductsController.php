@@ -64,15 +64,28 @@ class ProductsController extends Controller
 
     public function update(Request $request, $id)
     {
-        $validated = $request->validate([
-            'name' => 'sometimes|required|string|max:150',
-            'price' => 'sometimes|required|numeric|min:0',
-            'stock_quantity' => 'sometimes|required|integer|min:0'
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|string|max:150',
+            'price' => 'required|numeric|min:0',
+            'stock_quantity' => 'required|integer|min:0'
+        ],[
+            'name.required' => 'Nama produk tidak boleh kosong',
+            'price.required' => 'Harga tidak boleh kosong',
+            'price.min' => 'Harga tidak boleh negatif',
+            'stock_quantity.required' => 'Stok tidak boleh kosong',
+            'stock_quantity.min' => 'Stok tidak boleh negatif'
         ]);
+
+        if($validator->fails()) {
+            return response()->json([
+                'message' => 'Validasi gagal',
+                'error' => $validator->errors()
+            ]);
+        }
 
         try {
             $product = ProductsModel::findOrFail($id);
-            $product->update($validated);
+            $product->update($validator->validate());
             return response()->json($product, 200);
         } catch (\Throwable $th) {
             return response()->json([
