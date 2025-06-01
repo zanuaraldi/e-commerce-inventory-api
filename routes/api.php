@@ -2,6 +2,9 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\CategoriesController;
+use App\Http\Controllers\ProductsController;
+use App\Models\ProductsModel;
 
 /*
 |--------------------------------------------------------------------------
@@ -14,6 +17,21 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+Route::pattern('id', '[0-9]+');
+
+Route::prefix('categories')->group( function() {
+    Route::get('/', [CategoriesController::class, 'index']);
+    Route::post('/', [CategoriesController::class, 'store']);
 });
+
+Route::prefix('products')->group( function() {
+    Route::get('/', [ProductsController::class, 'index']);
+    Route::post('/', [ProductsController::class, 'store']);
+    Route::get('/{id}', [ProductsController::class, 'show']);
+    Route::put('/{id}', [ProductsController::class, 'update']);
+    Route::delete('/{id}', [ProductsController::class, 'destroy']);
+    Route::post('/update-stock', [ProductsController::class, 'updateStock']);
+    Route::get('/search', [ProductsController::class, 'search']);
+});
+
+Route::get('/inventory/value',[ProductsController::class, 'inventoryValue']);
