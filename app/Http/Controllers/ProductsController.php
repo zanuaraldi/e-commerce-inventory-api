@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\ProductsModel;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class ProductsController extends Controller
 {
@@ -14,15 +15,30 @@ class ProductsController extends Controller
 
     public function store(Request $request)
     {
-        $validated = $request->validate([
+        $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:150',
             'price' => 'required|numeric|min:0',
             'stock_quantity' => 'required|integer|min:0',
             'category_id' => 'required|exists:categories,id'
+        ],[
+            'name.required' => 'Nama produk tidak boleh kosong',
+            'price.required' => 'Harga tidak boleh kosong',
+            'price.min' => 'Harga tidak boleh negatif',
+            'stock_quantity.required' => 'Stok tidak boleh kosong',
+            'stock_quantity.min' => 'Stok tidak boleh negatif',
+            'category_id.required' => 'Kategori tidak boleh kosong',
+            'category_id.exists' => 'Kategori tidak valid atau tidak ada'
         ]);
 
+        if($validator->fails()) {
+            return response()->json([
+                'message' => 'Validasi gagal',
+                'error' => $validator->errors()
+            ]);
+        }
+
         try {
-            $product = ProductsModel::create($validated);
+            $product = ProductsModel::create($validator->validate());
             return response()->json([
                 'message' => 'Produk baru berhasil ditambahkan',
                 'data' => $product
